@@ -8,9 +8,16 @@ import { Badge } from "@/components/ui/badge";
 import { downloads, releaseInfo } from "@/lib/downloads";
 
 const releaseHighlights = [
-  "Multi-model comparison view",
-  "Offline evaluation controls",
-  "Enhanced prompt diff tools"
+  "Multi-model comparison dashboard with side-by-side metrics visualization",
+  "Enhanced offline evaluation mode with full local processing capabilities",
+  "Advanced prompt diff engine showing token-level changes and version tracking",
+  "Improved resource monitoring with GPU memory tracking and CPU profiling",
+  "Pareto frontier analysis for optimal model selection based on accuracy-latency trade-offs",
+  "PostgreSQL-based persistence layer replacing SQLite for better concurrent access",
+  "Automatic prompt generation using evolutionary grammar optimization",
+  "New chart exports supporting PNG, SVG, and interactive HTML formats",
+  "Performance improvements: 2-3x faster evaluation pipeline with parallel processing",
+  "Security enhancements including encrypted credential storage and row-level security"
 ];
 
 export default function DownloadPage() {
@@ -70,6 +77,14 @@ export default function DownloadPage() {
                   <span>{highlight}</span>
                 </div>
               ))}
+            </div>
+            <div className="release-meta">
+              <p>Released on {new Date(releaseInfo.releaseDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+              <div className="release-links">
+                <a href={releaseInfo.changelog} target="_blank" rel="noopener noreferrer">
+                  View full changelog →
+                </a>
+              </div>
             </div>
           </Section>
         </div>

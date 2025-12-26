@@ -208,6 +208,7 @@ ol {
   content: "";
   position: absolute;
   inset: 0;
+  border-radius: inherit;
   background: radial-gradient(circle at top left, hsl(var(--primary) / 0.2), transparent 60%);
   opacity: 0;
   transition: opacity var(--transition-emphasis);
@@ -900,6 +901,57 @@ ol {
   border-radius: 50%;
   background: hsl(var(--foreground));
   flex-shrink: 0;
+}
+
+.release-meta {
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid hsl(var(--border) / 0.4);
+}
+
+.release-meta p {
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+  margin: 0 0 1rem;
+}
+
+.release-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.release-links a {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: hsl(var(--foreground));
+  text-decoration: none;
+  transition: opacity var(--transition-base);
+}
+
+.release-links a:hover {
+  opacity: 0.7;
+}
+
+.demo-container {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.demo-video {
+  width: 100%;
+  height: auto;
+  border-radius: 1.5rem;
+  border: 1px solid hsl(var(--border) / 0.6);
+  background: hsl(var(--surface));
+  box-shadow: var(--shadow-lifted);
+  display: block;
+}
+
+.demo-video:focus {
+  outline: 2px solid hsl(var(--primary) / 0.5);
+  outline-offset: 4px;
 }
 
 @media (max-width: 1100px) {
