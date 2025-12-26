@@ -50,12 +50,27 @@ const faqItems = [
   {
     id: "faq-install",
     title: "Does it work offline?",
-    content: "Yes. Runs fully offline, syncs only when connected."
+    content: "Yes. Prompt LLM Bench runs completely offline on your local machine. All evaluations, data processing, and storage happen locally. You can optionally sync results to a remote backend when connected, but it's not required for core functionality."
   },
   {
     id: "faq-data",
     title: "Where is data stored?",
-    content: "In your local workspace directory."
+    content: "All benchmark data, run artifacts, and results are stored in your local workspace directory. You maintain full control over your data with no automatic cloud uploads. The workspace location is configurable during initial setup."
+  },
+  {
+    id: "faq-models",
+    title: "Which models are supported?",
+    content: "Prompt LLM Bench supports multiple backends including Transformers (HuggingFace), llama.cpp, and Ollama. You can benchmark any model compatible with these frameworks, including both local and API-based models."
+  },
+  {
+    id: "faq-platforms",
+    title: "What platforms are supported?",
+    content: "Available for macOS (Apple Silicon), Windows (ARM64), and Linux (ARM64). Intel/AMD x64 builds are available upon request for enterprise deployments."
+  },
+  {
+    id: "faq-export",
+    title: "Can I export results?",
+    content: "Yes. All benchmark results can be exported in multiple formats including Parquet, JSON, and Markdown. The tool generates detailed reports with metrics, visualizations, and recommendations for easy sharing with your team."
   }
 ];
 
@@ -91,6 +106,26 @@ export default function Home() {
               </div>
             </div>
           </section>
+
+          <Section>
+            <SectionHeader
+              eyebrow="See it in action"
+              title="Watch the demo"
+              description="See how Prompt LLM Bench helps you run structured benchmarks and compare results."
+              align="center"
+            />
+            <div className="demo-container">
+              <video
+                className="demo-video"
+                controls
+                preload="metadata"
+              >
+                <source src="/demo/demo_video.MOV" type="video/quicktime" />
+                <source src="/demo/demo_video.MOV" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          </Section>
 
           <DownloadSection
             id="download"

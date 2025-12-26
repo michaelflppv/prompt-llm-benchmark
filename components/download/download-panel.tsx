@@ -33,7 +33,6 @@ export function DownloadPanel({ variant = "full", showSteps = true }: DownloadPa
         <div className="pill">Recommended for {selected.label}</div>
         <div>Architecture: {selected.architecture}</div>
         <div>{selected.requirements}</div>
-        <div>File: {selected.fileName}</div>
         <div>
           <Badge variant="subtle">Version {releaseInfo.version}</Badge>
         </div>
@@ -52,9 +51,8 @@ export function DownloadPanel({ variant = "full", showSteps = true }: DownloadPa
 
       {variant === "full" ? (
         <div className="download-links">
-          <a href="/downloads/checksums.txt">Checksums</a>
-          <a href="/downloads/signatures.txt">Signatures</a>
-          <a href={releaseInfo.otherVersionsUrl}>Other versions</a>
+          <a href="/downloads/checksums.txt" download>Checksums (SHA256)</a>
+          <a href="/downloads/signatures.txt" download>GPG Signatures</a>
         </div>
       ) : null}
 
