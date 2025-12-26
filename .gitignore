@@ -11,7 +11,7 @@ __pycache__/
 build/
 develop-eggs/
 dist/
-downloads/
+# downloads/  # Commented out - conflicts with Next.js public/downloads
 eggs/
 .eggs/
 # lib/  # Commented out - conflicts with Next.js lib directory
@@ -221,7 +221,7 @@ yarn.lock
 pnpm-lock.yaml
 
 # Demo files
-demo/
+# demo/  # Using Git LFS for demo files
 
 # TypeScript
 *.tsbuildinfo
