@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardDescription, CardHeader, CardIcon, CardTitle } from "@/components/ui/card";
 import { Accordion } from "@/components/ui/accordion";
 import { IconChart, IconCloud, IconShield, IconSpark, IconWorkflow } from "@/components/ui/icons";
+import { ScrollAnimation } from "@/components/ui/scroll-animation";
 
 const featureItems = [
   {
@@ -108,23 +109,27 @@ export default function Home() {
           </section>
 
           <Section>
-            <SectionHeader
-              eyebrow="See it in action"
-              title="Watch the demo"
-              description="See how Prompt LLM Bench helps you run structured benchmarks and compare results."
-              align="center"
-            />
-            <div className="demo-container">
-              <video
-                className="demo-video"
-                controls
-                preload="metadata"
-              >
-                <source src="/demo/demo_video.MOV" type="video/quicktime" />
-                <source src="/demo/demo_video.MOV" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-            </div>
+            <ScrollAnimation animationType="fadeIn">
+              <SectionHeader
+                eyebrow="See it in action"
+                title="Watch the demo"
+                description="See how Prompt LLM Bench helps you run structured benchmarks and compare results."
+                align="center"
+              />
+            </ScrollAnimation>
+            <ScrollAnimation animationType="scale" delay={200}>
+              <div className="demo-container">
+                <video
+                  className="demo-video"
+                  controls
+                  preload="metadata"
+                >
+                  <source src="/demo/demo_video.MOV" type="video/quicktime" />
+                  <source src="/demo/demo_video.MOV" type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+            </ScrollAnimation>
           </Section>
 
           <DownloadSection
@@ -150,17 +155,21 @@ export default function Home() {
           </Section>
 
           <Section id="features">
-            <SectionHeader
-              eyebrow="Features"
-              title="Everything you need"
-            />
+            <ScrollAnimation animationType="fadeIn">
+              <SectionHeader
+                eyebrow="Features"
+                title="Everything you need"
+              />
+            </ScrollAnimation>
             <div className="features-grid">
-              {featureItems.map((feature) => (
-                <div key={feature.title} className="feature-card">
-                  <div className="feature-icon">{feature.icon}</div>
-                  <h3 className="feature-title">{feature.title}</h3>
-                  <p className="feature-description">{feature.description}</p>
-                </div>
+              {featureItems.map((feature, index) => (
+                <ScrollAnimation key={feature.title} animationType="slideUp" delay={index * 100}>
+                  <div className="feature-card">
+                    <div className="feature-icon">{feature.icon}</div>
+                    <h3 className="feature-title">{feature.title}</h3>
+                    <p className="feature-description">{feature.description}</p>
+                  </div>
+                </ScrollAnimation>
               ))}
             </div>
           </Section>
@@ -169,23 +178,29 @@ export default function Home() {
 
           <Section>
             <div className="value-grid">
-              {valuePoints.map((point) => (
-                <div key={point.title} className="value-card">
-                  <div className="value-icon">{point.icon}</div>
-                  <h3 className="value-title">{point.title}</h3>
-                  <p className="value-description">{point.description}</p>
-                </div>
+              {valuePoints.map((point, index) => (
+                <ScrollAnimation key={point.title} animationType="slideUp" delay={index * 150}>
+                  <div className="value-card">
+                    <div className="value-icon">{point.icon}</div>
+                    <h3 className="value-title">{point.title}</h3>
+                    <p className="value-description">{point.description}</p>
+                  </div>
+                </ScrollAnimation>
               ))}
             </div>
           </Section>
 
           <Section id="faq">
-            <SectionHeader
-              eyebrow="FAQ"
-              title="Quick answers"
-              description="Everything you need before you install."
-            />
-            <Accordion items={faqItems} />
+            <ScrollAnimation animationType="fadeIn">
+              <SectionHeader
+                eyebrow="FAQ"
+                title="Quick answers"
+                description="Everything you need before you install."
+              />
+            </ScrollAnimation>
+            <ScrollAnimation animationType="slideUp" delay={200}>
+              <Accordion items={faqItems} />
+            </ScrollAnimation>
           </Section>
         </div>
       </main>
