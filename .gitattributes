@@ -1,0 +1,3 @@
+*.dmg !text !filter !merge !diff
+*.exe !text !filter !merge !diff
+*.AppImage !text !filter !merge !diff
