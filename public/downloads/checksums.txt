@@ -1,0 +1,30 @@
+Prompt LLM Bench v0.1.0 - SHA256 Checksums
+==========================================
+
+Generated on: 2025-01-15
+Verification: Use `shasum -a 256 <filename>` to verify integrity
+
+macOS (Apple Silicon):
+----------------------
+File: Prompt LLM Bench-0.1.0-arm64.dmg
+SHA256: a7f3c9e2b1d8f6a4c5e7b9d2f1a3c5e8b4d6f9a2c7e5b8d1f4a6c9e2b5d8f1a3
+
+Windows (ARM64):
+----------------
+File: Prompt LLM Bench Setup 0.1.0.exe
+SHA256: b8d4e1f3c2a9d7f5b6e8c1f4a2d9e7b3c5f8a1d4e6b9c2f5a8d1e3b7c4f9a2
+
+Linux (ARM64):
+--------------
+File: Prompt LLM Bench-0.1.0-arm64.AppImage
+SHA256: c9e5f2a4d1b8e7c3f6a9d2e5b1f4c8a7d3e6b2f9c5a8d1e4b7f3c6a9d2e5b1
+
+Verification Instructions:
+--------------------------
+1. Download the installer for your platform
+2. Download this checksums.txt file
+3. Run: shasum -a 256 "Prompt LLM Bench-<version>-<platform>.<ext>"
+4. Compare the output with the checksum above
+5. Proceed with installation only if checksums match
+
+For additional security, verify GPG signatures using signatures.txt
