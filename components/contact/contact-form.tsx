@@ -7,7 +7,8 @@ export function ContactForm() {
     name: '',
     email: '',
     subject: '',
-    message: ''
+    message: '',
+    website: '' // Honeypot field
   });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
@@ -30,7 +31,7 @@ export function ContactForm() {
 
       if (response.ok) {
         setStatus('success');
-        setFormData({ name: '', email: '', subject: '', message: '' });
+        setFormData({ name: '', email: '', subject: '', message: '', website: '' });
       } else {
         setStatus('error');
         setErrorMessage(data.error || 'Failed to send message. Please try again.');
@@ -50,6 +51,18 @@ export function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit} className="contact-form">
+      {/* Honeypot field - hidden from users, but bots will fill it */}
+      <input
+        type="text"
+        name="website"
+        value={formData.website}
+        onChange={handleChange}
+        style={{ display: 'none' }}
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+      />
+
       <div className="form-grid">
         <div className="form-field">
           <label htmlFor="name" className="form-label">Name</label>
