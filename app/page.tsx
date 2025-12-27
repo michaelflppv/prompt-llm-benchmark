@@ -9,6 +9,7 @@ import { Accordion } from "@/components/ui/accordion";
 import { IconChart, IconCloud, IconShield, IconSpark, IconWorkflow } from "@/components/ui/icons";
 import { ScrollAnimation } from "@/components/ui/scroll-animation";
 import { AutoplayVideo } from "@/components/ui/autoplay-video";
+import { ContactForm } from "@/components/contact/contact-form";
 
 const featureItems = [
   {
@@ -197,6 +198,19 @@ export default function Home() {
             </ScrollAnimation>
             <ScrollAnimation animationType="slideUp" delay={200}>
               <Accordion items={faqItems} />
+            </ScrollAnimation>
+          </Section>
+
+          <Section id="contact">
+            <ScrollAnimation animationType="fadeIn">
+              <SectionHeader
+                eyebrow="Get in touch"
+                title="Contact us"
+                description="Have questions, feedback, or need support? We'd love to hear from you."
+              />
+            </ScrollAnimation>
+            <ScrollAnimation animationType="slideUp" delay={200}>
+              <ContactForm />
             </ScrollAnimation>
           </Section>
         </div>
