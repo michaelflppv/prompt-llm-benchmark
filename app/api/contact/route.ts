@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { sanitizeInput, sanitizeHTML, containsSuspiciousPatterns } from '@/lib/validation';
 import validator from 'validator';
 
+// Runtime configuration for Vercel
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
 const CONTACT_EMAIL = 'promptllmbench@gmail.com';
 
 // Rate limiting specifically for contact form (stricter than global)
