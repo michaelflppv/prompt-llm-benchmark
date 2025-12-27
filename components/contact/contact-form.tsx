@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export function ContactForm() {
   const [formData, setFormData] = useState({
@@ -12,6 +12,24 @@ export function ContactForm() {
   });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  const [isDismissing, setIsDismissing] = useState(false);
+
+  // Auto-dismiss messages after 5 seconds
+  useEffect(() => {
+    if (status === 'success' || status === 'error') {
+      const dismissTimer = setTimeout(() => {
+        setIsDismissing(true);
+        // Wait for fade-out animation to complete before hiding
+        setTimeout(() => {
+          setStatus('idle');
+          setErrorMessage('');
+          setIsDismissing(false);
+        }, 300); // Match animation duration
+      }, 5000);
+
+      return () => clearTimeout(dismissTimer);
+    }
+  }, [status]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -128,14 +146,20 @@ export function ContactForm() {
       </div>
 
       {status === 'error' && (
-        <div className="alert alert-error">
-          <strong>Error:</strong> {errorMessage}
+        <div className={`alert alert-error ${isDismissing ? 'dismissing' : ''}`}>
+          <div className="alert-content">
+            <strong>Error</strong>
+            <span>{errorMessage}</span>
+          </div>
         </div>
       )}
 
       {status === 'success' && (
-        <div className="alert alert-success">
-          <strong>Thank you!</strong> Your message has been sent. We'll get back to you soon.
+        <div className={`alert alert-success ${isDismissing ? 'dismissing' : ''}`}>
+          <div className="alert-content">
+            <strong>Thank you!</strong>
+            <span>Your message has been sent. We'll get back to you soon.</span>
+          </div>
         </div>
       )}
 
