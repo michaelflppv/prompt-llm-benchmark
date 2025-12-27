@@ -6,17 +6,19 @@ const RATE_LIMIT_WINDOW = 60 * 60 * 1000; // 1 hour in milliseconds
 const RATE_LIMIT_MAX_REQUESTS = 100;
 
 // In-memory store for rate limiting (per IP)
+// Note: On Vercel, this is per-instance and may not be shared across edge functions
+// For production rate limiting, consider using Vercel KV, Upstash, or similar
 const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
 
-// Cleanup old entries every 10 minutes
-setInterval(() => {
+// Cleanup function (called on-demand instead of setInterval for serverless compatibility)
+function cleanupExpiredEntries() {
   const now = Date.now();
   for (const [ip, data] of rateLimitStore.entries()) {
     if (now > data.resetTime) {
       rateLimitStore.delete(ip);
     }
   }
-}, 10 * 60 * 1000);
+}
 
 function getClientIP(request: NextRequest): string {
   // Try various headers for client IP
@@ -38,6 +40,11 @@ function getClientIP(request: NextRequest): string {
 }
 
 export function middleware(request: NextRequest) {
+  // Clean up expired entries periodically (serverless-safe)
+  if (Math.random() < 0.01) { // 1% chance to cleanup on each request
+    cleanupExpiredEntries();
+  }
+
   const ip = getClientIP(request);
   const now = Date.now();
 
@@ -95,7 +102,7 @@ export function middleware(request: NextRequest) {
     "img-src 'self' data: blob:",
     "font-src 'self' data:",
     "media-src 'self' blob:",
-    "connect-src 'self'",
+    "connect-src 'self' https://api.web3forms.com", // Allow Web3Forms API
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "form-action 'self'",

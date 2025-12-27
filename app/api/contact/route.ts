@@ -9,15 +9,15 @@ const CONTACT_RATE_LIMIT_WINDOW = 60 * 60 * 1000; // 1 hour
 const CONTACT_RATE_LIMIT_MAX = 3; // Max 3 submissions per hour per IP
 const contactRateLimitStore = new Map<string, { count: number; resetTime: number }>();
 
-// Cleanup old entries every 10 minutes
-setInterval(() => {
+// Cleanup function (serverless-compatible)
+function cleanupExpiredContactEntries() {
   const now = Date.now();
   for (const [ip, data] of contactRateLimitStore.entries()) {
     if (now > data.resetTime) {
       contactRateLimitStore.delete(ip);
     }
   }
-}, 10 * 60 * 1000);
+}
 
 function getClientIP(request: NextRequest): string {
   const forwarded = request.headers.get('x-forwarded-for');
@@ -54,6 +54,11 @@ function checkContactRateLimit(ip: string): { allowed: boolean; resetIn?: number
 
 export async function POST(request: NextRequest) {
   try {
+    // Clean up expired entries (serverless-safe)
+    if (Math.random() < 0.1) { // 10% chance to cleanup
+      cleanupExpiredContactEntries();
+    }
+
     // Check contact-specific rate limit
     const ip = getClientIP(request);
     const rateLimitCheck = checkContactRateLimit(ip);
