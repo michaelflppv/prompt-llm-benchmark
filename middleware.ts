@@ -40,6 +40,8 @@ function getClientIP(request: NextRequest): string {
 }
 
 export function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+
   // Clean up expired entries periodically (serverless-safe)
   if (Math.random() < 0.01) { // 1% chance to cleanup on each request
     cleanupExpiredEntries();
@@ -93,24 +95,29 @@ export function middleware(request: NextRequest) {
   response.headers.set('X-RateLimit-Remaining', (RATE_LIMIT_MAX_REQUESTS - rateLimitData.count).toString());
   response.headers.set('X-RateLimit-Reset', rateLimitData.resetTime.toString());
 
-  // Security headers
-  // Content Security Policy - Prevents XSS, clickjacking, and other code injection attacks
-  const cspHeader = [
-    "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // Next.js requires unsafe-eval in dev
-    "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data: blob:",
-    "font-src 'self' data:",
-    "media-src 'self' blob:",
-    "connect-src 'self' https://api.web3forms.com", // Allow Web3Forms API
-    "frame-ancestors 'none'",
-    "base-uri 'self'",
-    "form-action 'self'",
-    "object-src 'none'",
-    "upgrade-insecure-requests"
-  ].join('; ');
+  // Skip CSP for API routes to avoid conflicts
+  const isApiRoute = pathname.startsWith('/api/');
 
-  response.headers.set('Content-Security-Policy', cspHeader);
+  if (!isApiRoute) {
+    // Security headers
+    // Content Security Policy - Prevents XSS, clickjacking, and other code injection attacks
+    const cspHeader = [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // Next.js requires unsafe-eval in dev
+      "style-src 'self' 'unsafe-inline'",
+      "img-src 'self' data: blob:",
+      "font-src 'self' data:",
+      "media-src 'self' blob:",
+      "connect-src 'self' https://api.web3forms.com", // Allow Web3Forms API
+      "frame-ancestors 'none'",
+      "base-uri 'self'",
+      "form-action 'self'",
+      "object-src 'none'",
+      "upgrade-insecure-requests"
+    ].join('; ');
+
+    response.headers.set('Content-Security-Policy', cspHeader);
+  }
 
   // Prevent clickjacking attacks
   response.headers.set('X-Frame-Options', 'DENY');

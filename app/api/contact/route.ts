@@ -234,3 +234,22 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+// Handle OPTIONS for CORS preflight
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
+  });
+}
+
+// Handle GET requests (return method not allowed)
+export async function GET() {
+  return NextResponse.json(
+    { error: 'Method not allowed. Use POST to submit contact form.' },
+    { status: 405 }
+  );
+}
