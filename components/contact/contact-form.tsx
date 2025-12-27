@@ -27,18 +27,24 @@ export function ContactForm() {
         body: JSON.stringify(formData),
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        setStatus('success');
-        setFormData({ name: '', email: '', subject: '', message: '', website: '' });
-      } else {
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({ error: 'Unknown error' }));
         setStatus('error');
-        setErrorMessage(data.error || 'Failed to send message. Please try again.');
+        setErrorMessage(data.error || data.message || `Server error (${response.status})`);
+        return;
       }
+
+      const data = await response.json();
+      setStatus('success');
+      setFormData({ name: '', email: '', subject: '', message: '', website: '' });
     } catch (error) {
+      console.error('Contact form error:', error);
       setStatus('error');
-      setErrorMessage('Network error. Please check your connection and try again.');
+      setErrorMessage(
+        error instanceof Error
+          ? `Error: ${error.message}`
+          : 'Network error. Please check your connection and try again.'
+      );
     }
   };
 
