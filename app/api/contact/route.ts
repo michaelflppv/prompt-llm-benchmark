@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { sanitizeInput, validateEmail } from '@/lib/validation';
+import { sanitizeInput } from '@/lib/validation';
+import validator from 'validator';
 
 const CONTACT_EMAIL = 'promptllmbench@gmail.com';
 
@@ -22,7 +23,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate email format
-    if (!validateEmail(email)) {
+    if (!validator.isEmail(email)) {
       return NextResponse.json(
         { error: 'Invalid email address' },
         { status: 400 }
