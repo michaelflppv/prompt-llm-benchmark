@@ -174,13 +174,33 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const web3formsHeaders: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    };
+
+    const userAgent = request.headers.get('user-agent');
+    const acceptLanguage = request.headers.get('accept-language');
+    const origin = request.headers.get('origin');
+    const referer = request.headers.get('referer');
+
+    if (userAgent) {
+      web3formsHeaders['User-Agent'] = userAgent;
+    }
+    if (acceptLanguage) {
+      web3formsHeaders['Accept-Language'] = acceptLanguage;
+    }
+    if (origin) {
+      web3formsHeaders['Origin'] = origin;
+    }
+    if (referer) {
+      web3formsHeaders['Referer'] = referer;
+    }
+
     // Send to Web3Forms using their API
     const web3formsResponse = await fetch('https://api.web3forms.com/submit', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
+      headers: web3formsHeaders,
       body: JSON.stringify({
         access_key: process.env.WEB3FORMS_ACCESS_KEY,
         name: name,
@@ -196,11 +216,29 @@ export async function POST(request: NextRequest) {
     // Check if response is OK and is JSON before parsing
     if (!web3formsResponse.ok) {
       const errorText = await web3formsResponse.text();
+      const isCloudflareChallenge = web3formsResponse.status === 403 && errorText.includes('Just a moment');
       console.error('Web3Forms API error:', {
         status: web3formsResponse.status,
         statusText: web3formsResponse.statusText,
         body: errorText.substring(0, 500) // Log first 500 chars
       });
+      if (isDevelopment && isCloudflareChallenge) {
+        console.warn('Web3Forms blocked the request in development mode. Logging submission instead.');
+        console.log('Contact form submission (development fallback - no email sent):', {
+          name,
+          email,
+          subject,
+          message,
+          timestamp: new Date().toISOString()
+        });
+        return NextResponse.json(
+          {
+            success: true,
+            message: 'Message logged to console (development mode). Web3Forms blocked the request locally.'
+          },
+          { status: 200 }
+        );
+      }
       throw new Error(`Web3Forms API returned ${web3formsResponse.status}`);
     }
 
