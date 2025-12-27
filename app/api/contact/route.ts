@@ -141,19 +141,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // If WEB3FORMS_ACCESS_KEY is not set, log and return success
-    if (!process.env.WEB3FORMS_ACCESS_KEY) {
-      console.log('Contact form submission (no email sent - WEB3FORMS_ACCESS_KEY not set):', {
+    // Skip Web3Forms if no access key OR if in dev mode without explicit enable flag
+    const isDevelopment = process.env.NODE_ENV === 'development';
+    const enableEmailInDev = process.env.ENABLE_EMAIL_IN_DEV === 'true';
+
+    if (!process.env.WEB3FORMS_ACCESS_KEY || (isDevelopment && !enableEmailInDev)) {
+      console.log('Contact form submission (development mode - no email sent):', {
         name,
         email,
         subject,
-        message
+        message,
+        timestamp: new Date().toISOString()
       });
 
       return NextResponse.json(
         {
           success: true,
-          message: 'Message received. Email delivery requires WEB3FORMS_ACCESS_KEY environment variable.'
+          message: isDevelopment
+            ? 'Message logged to console (development mode). Set ENABLE_EMAIL_IN_DEV=true to send real emails.'
+            : 'Message received. Email delivery requires WEB3FORMS_ACCESS_KEY environment variable.'
         },
         { status: 200 }
       );
@@ -177,6 +183,27 @@ export async function POST(request: NextRequest) {
         to: CONTACT_EMAIL
       })
     });
+
+    // Check if response is OK and is JSON before parsing
+    if (!web3formsResponse.ok) {
+      const errorText = await web3formsResponse.text();
+      console.error('Web3Forms API error:', {
+        status: web3formsResponse.status,
+        statusText: web3formsResponse.statusText,
+        body: errorText.substring(0, 500) // Log first 500 chars
+      });
+      throw new Error(`Web3Forms API returned ${web3formsResponse.status}`);
+    }
+
+    const contentType = web3formsResponse.headers.get('content-type');
+    if (!contentType?.includes('application/json')) {
+      const responseText = await web3formsResponse.text();
+      console.error('Web3Forms returned non-JSON response:', {
+        contentType,
+        body: responseText.substring(0, 500)
+      });
+      throw new Error('Web3Forms API returned invalid response format');
+    }
 
     const web3formsData = await web3formsResponse.json();
 

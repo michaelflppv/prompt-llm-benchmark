@@ -637,12 +637,23 @@ ol {
   padding: 1rem 1.25rem;
   color: hsl(var(--muted-foreground));
   display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+  align-items: flex-start;
+  gap: 0;
+  position: relative;
+  font-size: 0.9375rem;
+  line-height: 1.6;
 }
 
 .alert strong {
   color: hsl(var(--foreground));
+  font-weight: 600;
+}
+
+.alert-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
 .alert-actions {
@@ -923,15 +934,77 @@ ol {
 }
 
 .alert-success {
-  background: hsl(120 60% 15%);
-  border-color: hsl(120 60% 25%);
-  color: hsl(120 60% 90%);
+  background: linear-gradient(135deg, hsl(142 76% 8%) 0%, hsl(142 76% 10%) 100%);
+  border-color: hsl(142 76% 20% / 0.6);
+  color: hsl(142 76% 92%);
+  box-shadow: 0 4px 12px hsl(142 76% 8% / 0.4);
+  animation: slideIn 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+.alert-success::before {
+  content: "✓";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: hsl(142 76% 25%);
+  color: hsl(142 76% 95%);
+  font-weight: 700;
+  font-size: 0.875rem;
+  flex-shrink: 0;
+  margin-right: 0.75rem;
 }
 
 .alert-error {
-  background: hsl(0 60% 15%);
-  border-color: hsl(0 60% 25%);
-  color: hsl(0 60% 90%);
+  background: linear-gradient(135deg, hsl(0 84% 8%) 0%, hsl(0 84% 10%) 100%);
+  border-color: hsl(0 84% 20% / 0.6);
+  color: hsl(0 84% 92%);
+  box-shadow: 0 4px 12px hsl(0 84% 8% / 0.4);
+  animation: slideIn 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+.alert-error::before {
+  content: "✕";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: hsl(0 84% 25%);
+  color: hsl(0 84% 95%);
+  font-weight: 700;
+  font-size: 0.875rem;
+  flex-shrink: 0;
+  margin-right: 0.75rem;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+.alert.dismissing {
+  animation: fadeOut 0.3s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
 }
 
 @media (max-width: 720px) {
