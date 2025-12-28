@@ -242,3 +242,9 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
+*.exe
+*.dmg
+*.AppImage
+*.msi
+*.deb
+*.rpm
