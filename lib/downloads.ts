@@ -27,7 +27,7 @@ export const downloads: Record<OSKey, DownloadOption> = {
     key: "mac",
     label: "macOS",
     fileName: "Prompt LLM Bench-0.1.0-arm64.dmg",
-    href: "/downloads/Prompt%20LLM%20Bench-0.1.0-arm64.dmg",
+    href: "/api/download/mac",
     architecture: "Apple Silicon (ARM64)",
     requirements: "Requires macOS 13+",
     steps: [
@@ -40,7 +40,7 @@ export const downloads: Record<OSKey, DownloadOption> = {
     key: "windows",
     label: "Windows",
     fileName: "Prompt LLM Bench Setup 0.1.0.exe",
-    href: "/downloads/Prompt%20LLM%20Bench%20Setup%200.1.0.exe",
+    href: "/api/download/windows",
     architecture: "ARM64",
     requirements: "Requires Windows 11",
     steps: [
@@ -53,7 +53,7 @@ export const downloads: Record<OSKey, DownloadOption> = {
     key: "linux",
     label: "Linux",
     fileName: "Prompt LLM Bench-0.1.0-arm64.AppImage",
-    href: "/downloads/Prompt%20LLM%20Bench-0.1.0-arm64.AppImage",
+    href: "/api/download/linux",
     architecture: "ARM64",
     requirements: "Requires glibc 2.35+",
     steps: [
