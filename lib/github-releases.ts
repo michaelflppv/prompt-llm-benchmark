@@ -17,9 +17,9 @@ export const GITHUB_RELEASE_CONFIG = {
 } as const;
 
 export const PLATFORM_FILENAMES = {
-  mac: "Prompt LLM Bench-0.1.0-arm64.dmg",
-  windows: "Prompt LLM Bench Setup 0.1.0.exe",
-  linux: "Prompt LLM Bench-0.1.0-arm64.AppImage",
+  mac: "Prompt.LLM.Bench-0.1.0-arm64.dmg",
+  windows: "Prompt.LLM.Bench.Setup.0.1.0.exe",
+  linux: "Prompt.LLM.Bench-0.1.0-arm64.AppImage",
 } as const;
 
 export type Platform = keyof typeof PLATFORM_FILENAMES;
