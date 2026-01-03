@@ -52,10 +52,12 @@ export default function YouTubeAutoplayVideo({
     <div ref={containerRef} className={`youtube-video-container ${className}`}>
       <iframe
         ref={iframeRef}
-        src={`https://www.youtube.com/embed/${videoId}?autoplay=0&mute=1&loop=1&playlist=${videoId}&controls=0&modestbranding=1&rel=0&enablejsapi=1`}
+        src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=0&mute=1&loop=1&playlist=${videoId}&controls=0&modestbranding=1&rel=0&enablejsapi=1`}
         title="Demo Video"
-        allow="autoplay; encrypted-media"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         allowFullScreen
+        referrerPolicy="strict-origin-when-cross-origin"
+        style={{ border: 0, width: '100%', height: '100%' }}
       />
     </div>
   );
