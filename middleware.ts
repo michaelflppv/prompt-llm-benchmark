@@ -109,6 +109,7 @@ export function middleware(request: NextRequest) {
       "font-src 'self' data:",
       "media-src 'self' blob:",
       "connect-src 'self' https://api.web3forms.com", // Allow Web3Forms API
+      "frame-src 'self' https://www.youtube-nocookie.com https://www.youtube.com", // Allow YouTube embeds
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self'",
