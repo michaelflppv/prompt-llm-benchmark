@@ -8,7 +8,7 @@ import { Card, CardDescription, CardHeader, CardIcon, CardTitle } from "@/compon
 import { Accordion } from "@/components/ui/accordion";
 import { IconChart, IconCloud, IconShield, IconSpark, IconWorkflow } from "@/components/ui/icons";
 import { ScrollAnimation } from "@/components/ui/scroll-animation";
-import { AutoplayVideo } from "@/components/ui/autoplay-video";
+import YouTubeAutoplayVideo from "@/components/ui/youtube-autoplay-video";
 import { ContactForm } from "@/components/contact/contact-form";
 
 const featureItems = [
@@ -121,8 +121,8 @@ export default function Home() {
             </ScrollAnimation>
             <ScrollAnimation animationType="scale" delay={200}>
               <div className="demo-container">
-                <AutoplayVideo
-                  src="/demo/demo_video.MOV"
+                <YouTubeAutoplayVideo
+                  videoId="IQAArdVRpOY"
                   className="demo-video"
                   threshold={0.75}
                 />
