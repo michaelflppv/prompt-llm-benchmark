@@ -4,7 +4,7 @@ The contact form is configured to send emails to: **promptllmbench@gmail.com**
 
 ## Email Service Setup (Required for Production)
 
-The contact form uses [Web3Forms](https://web3forms.com/) - a free service that doesn't require a backend server.
+The contact form uses [Web3Forms](https://web3forms.com/) - a free service with **direct client-side submission** (no backend needed).
 
 ### Setup Steps:
 
@@ -18,8 +18,9 @@ The contact form uses [Web3Forms](https://web3forms.com/) - a free service that 
    - Go to your Vercel project dashboard
    - Navigate to **Settings** → **Environment Variables**
    - Add new variable:
-     - Name: `WEB3FORMS_ACCESS_KEY`
+     - Name: `NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY`
      - Value: Your access key from step 1
+     - **Important**: The `NEXT_PUBLIC_` prefix is required for client-side access
    - Click **Save**
 
 3. **Redeploy**
@@ -65,16 +66,18 @@ SMTP_PASS=your_app_password
 
 ## Testing Locally
 
-Without the access key, submissions will be logged to console but not sent via email.
-
 To test locally:
-1. Copy the access key to `.env.local`:
+1. Create `.env.local` file in the project root (if it doesn't exist)
+2. Add your access key:
    ```
-   WEB3FORMS_ACCESS_KEY=your_key_here
+   NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY=your_key_here
    ```
-2. Run `npm run dev`
-3. Submit the contact form
-4. Check your email inbox
+   **Note**: The `NEXT_PUBLIC_` prefix exposes the variable to the browser (safe for Web3Forms API keys)
+3. Run `npm run dev`
+4. Submit the contact form
+5. Check your email inbox
+
+**Important**: Web3Forms access keys are meant to be public and can be safely exposed in client-side code.
 
 ## Form Features
 

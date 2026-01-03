@@ -33,28 +33,48 @@ export function ContactForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Honeypot check (client-side)
+    if (formData.website) {
+      // Silent fail for bots
+      setStatus('success');
+      setTimeout(() => {
+        setFormData({ name: '', email: '', subject: '', message: '', website: '' });
+      }, 1000);
+      return;
+    }
+
     setStatus('loading');
     setErrorMessage('');
 
     try {
-      const response = await fetch('/api/contact', {
+      // Submit directly to Web3Forms API (client-side)
+      const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          access_key: process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY || 'YOUR_ACCESS_KEY_HERE',
+          name: formData.name,
+          email: formData.email,
+          subject: `Contact Form: ${formData.subject}`,
+          message: formData.message,
+          from_name: formData.name,
+          replyto: formData.email,
+        }),
       });
 
-      if (!response.ok) {
-        const data = await response.json().catch(() => ({ error: 'Unknown error' }));
-        setStatus('error');
-        setErrorMessage(data.error || data.message || `Server error (${response.status})`);
-        return;
-      }
-
       const data = await response.json();
-      setStatus('success');
-      setFormData({ name: '', email: '', subject: '', message: '', website: '' });
+
+      if (data.success) {
+        setStatus('success');
+        setFormData({ name: '', email: '', subject: '', message: '', website: '' });
+      } else {
+        setStatus('error');
+        setErrorMessage(data.message || 'Failed to send message. Please try again.');
+      }
     } catch (error) {
       console.error('Contact form error:', error);
       setStatus('error');
