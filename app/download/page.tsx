@@ -5,6 +5,7 @@ import { Section, SectionHeader } from "@/components/ui/section";
 import { Card, CardDescription, CardHeader, CardMeta, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { downloads, releaseInfo } from "@/lib/downloads";
 
 const releaseHighlights = [
@@ -26,6 +27,12 @@ export default function DownloadPage() {
       <Navbar />
       <main className="main-shell">
         <div className="container">
+          <Breadcrumb
+            items={[
+              { label: "Home", href: "/" },
+              { label: "Download" }
+            ]}
+          />
           <section className="hero">
             <div className="hero-grid">
               <div>

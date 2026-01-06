@@ -33,8 +33,9 @@ export function DownloadPanel({ variant = "full", showSteps = true }: DownloadPa
         <div className="pill">Recommended for {selected.label}</div>
         <div>Architecture: {selected.architecture}</div>
         <div>{selected.requirements}</div>
-        <div>
+        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
           <Badge variant="subtle">Version {releaseInfo.version}</Badge>
+          <Badge>100% Free</Badge>
         </div>
       </div>
 

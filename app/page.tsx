@@ -6,46 +6,85 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardDescription, CardHeader, CardIcon, CardTitle } from "@/components/ui/card";
 import { Accordion } from "@/components/ui/accordion";
-import { IconChart, IconCloud, IconShield, IconSpark, IconWorkflow } from "@/components/ui/icons";
+import { IconChart, IconCloud, IconShield, IconSpark, IconWorkflow, IconRocket, IconLock, IconPulse, IconCode, IconTarget, IconZap, IconDatabase } from "@/components/ui/icons";
 import { ScrollAnimation } from "@/components/ui/scroll-animation";
 import YouTubeAutoplayVideo from "@/components/ui/youtube-autoplay-video";
 import { ContactForm } from "@/components/contact/contact-form";
 
 const featureItems = [
   {
+    title: "Multi-backend support",
+    description: "Benchmark across Transformers, llama.cpp, and Ollama with automatic GPU detection.",
+    icon: <IconRocket width={20} height={20} />,
+    featured: true
+  },
+  {
     title: "Benchmark orchestration",
-    description: "Define prompt suites, datasets, and model pools.",
+    description: "Define prompt suites, datasets, and model pools with YAML configurations.",
     icon: <IconWorkflow width={20} height={20} />
   },
   {
     title: "Insightful metrics",
-    description: "Track latency, quality, and cost with focused views.",
+    description: "Track latency, accuracy, memory usage, and cost with Pareto frontier analysis.",
     icon: <IconChart width={20} height={20} />
   },
   {
     title: "Offline-ready workspace",
-    description: "Run evaluations locally with full control.",
+    description: "Run evaluations locally with PostgreSQL persistence and full data control.",
     icon: <IconCloud width={20} height={20} />
   },
   {
     title: "Prompt iteration",
-    description: "Compare revisions and export findings.",
+    description: "Compare revisions, auto-generate prompts, and export findings to multiple formats.",
     icon: <IconSpark width={20} height={20} />
+  },
+  {
+    title: "Real-time monitoring",
+    description: "Live resource tracking with Prometheus metrics and performance dashboards.",
+    icon: <IconPulse width={20} height={20} />
+  },
+  {
+    title: "Security & privacy",
+    description: "Encrypted secrets, row-level security, and local-first data architecture.",
+    icon: <IconLock width={20} height={20} />
+  },
+  {
+    title: "Reproducible results",
+    description: "Snapshot models and configs for every run with complete audit trail.",
+    icon: <IconShield width={20} height={20} />
   }
 ];
 
-const logos = ["VectorMind", "Orion Data", "Kitebase", "Arcadio"];
-
 const valuePoints = [
   {
-    title: "Repeatable experiments",
-    description: "Captured with consistent inputs and metrics.",
+    title: "Reproducible by design",
+    description: "Every benchmark run captures complete environment snapshots, model configs, and dataset versions for perfect reproducibility.",
     icon: <IconShield width={20} height={20} />
   },
   {
     title: "Flexible deployment",
-    description: "Local, offline, or synced when ready.",
+    description: "Run fully offline on your local machine, or sync results to remote storage when you're ready. Your choice, your control.",
     icon: <IconCloud width={20} height={20} />
+  },
+  {
+    title: "Built for developers",
+    description: "YAML-based configurations, CLI-first workflow, and REST API for seamless integration into your existing pipelines.",
+    icon: <IconCode width={20} height={20} />
+  },
+  {
+    title: "Cost-optimized selection",
+    description: "Pareto frontier analysis automatically identifies the best model for your accuracy, speed, and budget constraints.",
+    icon: <IconTarget width={20} height={20} />
+  },
+  {
+    title: "Lightning fast",
+    description: "Parallel execution, persistent monitors, and optimized pipelines deliver 2-3x faster results than traditional benchmarking.",
+    icon: <IconZap width={20} height={20} />
+  },
+  {
+    title: "PostgreSQL-powered",
+    description: "Enterprise-grade persistence with row-level security, concurrent access, and full ACID compliance for team workflows.",
+    icon: <IconDatabase width={20} height={20} />
   }
 ];
 
@@ -87,9 +126,9 @@ export default function Home() {
             <div className="hero-grid">
               <div>
                 <Badge>Desktop release</Badge>
-                <h1 className="hero-title">Benchmark prompts with confidence.</h1>
+                <h1 className="hero-title">Find your optimal LLM in minutes, not weeks.</h1>
                 <p className="hero-description">
-                  A focused desktop workspace for structured prompt evaluation.
+                  Benchmark prompt strategies across multiple models locally. Compare accuracy, latency, and cost with zero cloud dependency.
                 </p>
                 <div className="hero-actions">
                   <Button href="/download" variant="primary">
@@ -139,19 +178,6 @@ export default function Home() {
             showSteps={false}
           />
 
-          <Section>
-            <div className="logos-wrapper">
-              <span className="logos-label">Trusted by</span>
-              <div className="logos-grid">
-                {logos.map((logo) => (
-                  <div key={logo} className="logo-tile">
-                    {logo}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </Section>
-
           <Section id="features">
             <ScrollAnimation animationType="fadeIn">
               <SectionHeader
@@ -174,10 +200,18 @@ export default function Home() {
 
           <div className="divider"></div>
 
-          <Section>
+          <Section id="benefits">
+            <ScrollAnimation animationType="fadeIn">
+              <SectionHeader
+                eyebrow="Why choose us"
+                title="Built for performance and control"
+                description="Designed from the ground up for teams who need speed, accuracy, and complete data sovereignty."
+                align="center"
+              />
+            </ScrollAnimation>
             <div className="value-grid">
               {valuePoints.map((point, index) => (
-                <ScrollAnimation key={point.title} animationType="slideUp" delay={index * 150}>
+                <ScrollAnimation key={point.title} animationType="slideUp" delay={index * 100}>
                   <div className="value-card">
                     <div className="value-icon">{point.icon}</div>
                     <h3 className="value-title">{point.title}</h3>
@@ -207,6 +241,7 @@ export default function Home() {
                 eyebrow="Get in touch"
                 title="Contact us"
                 description="Have questions, feedback, or need support? We'd love to hear from you."
+                align="center"
               />
             </ScrollAnimation>
             <ScrollAnimation animationType="slideUp" delay={200}>

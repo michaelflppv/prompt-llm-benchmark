@@ -19,6 +19,10 @@
   --primary-foreground: 0 0% 0%;
   --primary-muted: 0 0% 85%;
 
+  --accent-primary: 220 100% 65%;
+  --accent-secondary: 260 100% 70%;
+  --accent-success: 142 76% 55%;
+
   --neutral-50: 0 0% 4%;
   --neutral-100: 0 0% 8%;
   --neutral-200: 0 0% 12%;
@@ -168,8 +172,10 @@ ol {
 }
 
 .main-shell {
-  background: radial-gradient(circle at top left, hsl(var(--primary) / 0.15), transparent 55%),
-    linear-gradient(to bottom, hsl(var(--surface)), hsl(var(--background)) 55%, hsl(var(--primary) / 0.05));
+  background:
+    radial-gradient(circle at top left, hsl(var(--accent-primary) / 0.08), transparent 45%),
+    radial-gradient(circle at bottom right, hsl(var(--accent-secondary) / 0.06), transparent 50%),
+    linear-gradient(to bottom, hsl(var(--surface)), hsl(var(--background)) 55%, hsl(var(--accent-primary) / 0.03));
 }
 
 .section {
@@ -250,7 +256,7 @@ ol {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: radial-gradient(circle at top left, hsl(var(--primary) / 0.2), transparent 60%);
+  background: radial-gradient(circle at top left, hsl(var(--accent-primary) / 0.15), hsl(var(--accent-secondary) / 0.08) 60%, transparent 80%);
   opacity: 0;
   transition: opacity var(--transition-emphasis);
   pointer-events: none;
@@ -258,7 +264,8 @@ ol {
 
 .card:hover {
   transform: translateY(-4px);
-  border-color: hsl(var(--border) / 0.95);
+  border-color: hsl(var(--accent-primary) / 0.3);
+  box-shadow: 0 24px 48px -20px hsl(var(--accent-primary) / 0.2), var(--shadow-soft);
 }
 
 .card:hover::before {
@@ -308,14 +315,15 @@ ol {
   gap: 0.4rem;
   padding: 0.4rem 1rem;
   border-radius: var(--radius-pill);
-  border: 1px solid hsl(var(--border) / 0.7);
-  background: hsl(var(--surface-muted));
+  border: 1px solid hsl(var(--accent-primary) / 0.3);
+  background: linear-gradient(135deg, hsl(var(--surface-muted)), hsl(var(--accent-primary) / 0.08));
   color: hsl(var(--foreground));
   font-size: 0.6875rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   line-height: 1;
+  box-shadow: 0 0 16px hsl(var(--accent-primary) / 0.15);
 }
 
 .badge.subtle {
@@ -356,14 +364,30 @@ ol {
 .btn-primary {
   background: hsl(var(--foreground));
   color: hsl(var(--background));
-  box-shadow: var(--shadow-soft);
+  box-shadow: var(--shadow-soft), 0 0 0 0 hsl(var(--accent-primary) / 0);
   border: 1px solid hsl(var(--foreground));
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--transition-base), background var(--transition-base), box-shadow var(--transition-emphasis);
+}
+
+.btn-primary::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, hsl(var(--accent-primary) / 0.2), hsl(var(--accent-secondary) / 0.15));
+  opacity: 0;
+  transition: opacity var(--transition-emphasis);
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  background: hsl(var(--foreground) / 0.9);
-  box-shadow: var(--shadow-lifted);
+  background: hsl(var(--foreground) / 0.95);
+  box-shadow: var(--shadow-lifted), 0 0 24px 4px hsl(var(--accent-primary) / 0.3);
+}
+
+.btn-primary:hover::before {
+  opacity: 1;
 }
 
 .btn-secondary {
@@ -627,7 +651,12 @@ ol {
   margin: 0;
   line-height: 1.15;
   letter-spacing: -0.025em;
-  font-weight: 700;
+  font-weight: 800;
+  background: linear-gradient(135deg, hsl(var(--foreground)) 0%, hsl(var(--foreground) / 0.85) 50%, hsl(var(--accent-primary)) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% auto;
 }
 
 .hero-description {
@@ -649,7 +678,7 @@ ol {
   position: relative;
   border-radius: 1.5rem;
   border: 1px solid hsl(var(--border) / 0.6);
-  background: hsl(var(--surface));
+  background: linear-gradient(135deg, hsl(var(--surface)), hsl(var(--accent-primary) / 0.04));
   padding: 2.5rem;
   overflow: hidden;
 }
@@ -660,7 +689,8 @@ ol {
   top: 0;
   bottom: 0;
   width: 4px;
-  background: hsl(var(--foreground));
+  background: linear-gradient(180deg, hsl(var(--accent-primary)), hsl(var(--accent-secondary)));
+  box-shadow: 0 0 12px hsl(var(--accent-primary) / 0.5);
 }
 
 .visual-content {
@@ -849,15 +879,45 @@ ol {
 
 .value-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .value-card {
-  padding: 2rem;
+  padding: 2rem 1.75rem;
   border-radius: 1.25rem;
   border: 1px solid hsl(var(--border) / 0.5);
-  background: hsl(var(--surface) / 0.5);
+  background: linear-gradient(135deg, hsl(var(--surface) / 0.6), hsl(var(--surface) / 0.4));
+  position: relative;
+  overflow: hidden;
+  transition: border-color var(--transition-emphasis), transform var(--transition-base), box-shadow var(--transition-emphasis);
+}
+
+.value-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at bottom right, hsl(var(--accent-secondary) / 0.12), hsl(var(--accent-primary) / 0.06) 60%, transparent 80%);
+  opacity: 0;
+  transition: opacity var(--transition-emphasis);
+  pointer-events: none;
+}
+
+.value-card:nth-child(odd)::before {
+  background: radial-gradient(circle at top left, hsl(var(--accent-primary) / 0.12), hsl(var(--accent-secondary) / 0.06) 60%, transparent 80%);
+}
+
+.value-card:hover {
+  border-color: hsl(var(--accent-secondary) / 0.35);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px -10px hsl(var(--accent-secondary) / 0.25);
+}
+
+.value-card:hover::before {
+  opacity: 1;
 }
 
 .value-icon {
@@ -868,26 +928,66 @@ ol {
   justify-content: center;
   margin-bottom: 1.25rem;
   color: hsl(var(--foreground));
+  position: relative;
+  z-index: 1;
+  transition: color var(--transition-emphasis), transform var(--transition-base);
+}
+
+.value-card:hover .value-icon {
+  color: hsl(var(--accent-secondary));
+  transform: scale(1.08);
 }
 
 .value-title {
-  font-size: 1.0625rem;
+  font-size: 1.125rem;
   font-weight: 600;
-  line-height: 1.4;
-  margin: 0 0 0.5rem;
+  line-height: 1.35;
+  margin: 0 0 0.65rem;
+  position: relative;
+  z-index: 1;
 }
 
 .value-description {
   font-size: 0.9375rem;
-  line-height: 1.6;
+  line-height: 1.65;
   color: hsl(var(--muted-foreground));
   margin: 0;
+  position: relative;
+  z-index: 1;
 }
 
 .features-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+  max-width: 1200px;
+}
+
+.features-grid > :first-child {
+  grid-column: span 2;
+  grid-row: span 2;
+  padding: 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: linear-gradient(135deg, hsl(var(--surface) / 0.6), hsl(var(--accent-primary) / 0.05));
+  border-color: hsl(var(--accent-primary) / 0.25);
+}
+
+.features-grid > :first-child .feature-icon {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 1.5rem;
+}
+
+.features-grid > :first-child .feature-title {
+  font-size: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.features-grid > :first-child .feature-description {
+  font-size: 1rem;
+  line-height: 1.7;
 }
 
 .feature-card {
@@ -895,12 +995,32 @@ ol {
   border-radius: 1rem;
   border: 1px solid hsl(var(--border) / 0.5);
   background: hsl(var(--surface) / 0.4);
-  transition: border-color var(--transition-base), transform var(--transition-base);
+  position: relative;
+  overflow: hidden;
+  transition: border-color var(--transition-emphasis), transform var(--transition-emphasis), box-shadow var(--transition-emphasis);
+  display: flex;
+  flex-direction: column;
+}
+
+.feature-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at top right, hsl(var(--accent-primary) / 0.12), transparent 70%);
+  opacity: 0;
+  transition: opacity var(--transition-emphasis);
+  pointer-events: none;
 }
 
 .feature-card:hover {
-  border-color: hsl(var(--border));
-  transform: translateY(-2px);
+  border-color: hsl(var(--accent-primary) / 0.4);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px -12px hsl(var(--accent-primary) / 0.25);
+}
+
+.feature-card:hover::after {
+  opacity: 1;
 }
 
 .feature-icon {
@@ -911,6 +1031,14 @@ ol {
   justify-content: center;
   margin-bottom: 1rem;
   color: hsl(var(--foreground));
+  position: relative;
+  z-index: 1;
+  transition: color var(--transition-emphasis), transform var(--transition-base);
+}
+
+.feature-card:hover .feature-icon {
+  color: hsl(var(--accent-primary));
+  transform: scale(1.1);
 }
 
 .feature-title {
@@ -1013,6 +1141,7 @@ ol {
 
 .contact-form {
   max-width: 600px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -1272,6 +1401,49 @@ ol {
   height: 100%;
 }
 
+.breadcrumb {
+  padding: 1rem 0 0.5rem;
+}
+
+.breadcrumb-list {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.breadcrumb-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1;
+}
+
+.breadcrumb-link {
+  color: hsl(var(--muted-foreground));
+  transition: color var(--transition-base);
+  text-decoration: none;
+}
+
+.breadcrumb-link:hover {
+  color: hsl(var(--foreground));
+}
+
+.breadcrumb-separator {
+  color: hsl(var(--muted-foreground) / 0.5);
+  font-size: 0.75rem;
+  user-select: none;
+}
+
+.breadcrumb-current {
+  color: hsl(var(--foreground));
+  font-weight: 500;
+}
+
 @media (max-width: 1100px) {
   .grid-3,
   .grid-4 {
@@ -1285,6 +1457,32 @@ ol {
 
   .features-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+
+  .value-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+
+  .features-grid > :first-child {
+    grid-column: span 2;
+    grid-row: span 1;
+    padding: 2rem 1.75rem;
+  }
+
+  .features-grid > :first-child .feature-icon {
+    width: 36px;
+    height: 36px;
+    margin-bottom: 1.25rem;
+  }
+
+  .features-grid > :first-child .feature-title {
+    font-size: 1.125rem;
+  }
+
+  .features-grid > :first-child .feature-description {
+    font-size: 0.9375rem;
   }
 
   .segmented {
@@ -1345,6 +1543,27 @@ ol {
   .features-grid,
   .value-grid {
     grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .features-grid > :first-child {
+    grid-column: span 1;
+    grid-row: span 1;
+    padding: 2rem 1.5rem;
+  }
+
+  .features-grid > :first-child .feature-icon {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 1rem;
+  }
+
+  .features-grid > :first-child .feature-title {
+    font-size: 1rem;
+  }
+
+  .features-grid > :first-child .feature-description {
+    font-size: 0.875rem;
   }
 
   .logos-wrapper {
@@ -1381,21 +1600,34 @@ ol {
   align-items: stretch;
   border-radius: 2rem;
   overflow: hidden;
-  background: hsl(var(--primary));
-  box-shadow: var(--shadow-soft);
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-muted)));
+  box-shadow: var(--shadow-soft), 0 0 0 0 hsl(var(--accent-primary) / 0.5);
   transition: all var(--transition-emphasis);
+  position: relative;
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: var(--shadow-soft), 0 0 20px 2px hsl(var(--accent-primary) / 0.3);
+  }
+  50% {
+    box-shadow: var(--shadow-soft), 0 0 30px 4px hsl(var(--accent-primary) / 0.5);
+  }
 }
 
 .download-button-group:hover {
-  background: hsl(var(--primary-muted));
-  box-shadow: var(--shadow-lifted);
-  transform: translateY(-2px);
+  background: linear-gradient(135deg, hsl(var(--primary-muted)), hsl(var(--primary)));
+  box-shadow: var(--shadow-lifted), 0 0 32px 6px hsl(var(--accent-primary) / 0.6);
+  transform: translateY(-3px) scale(1.02);
+  animation: none;
 }
 
 .download-button-main {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 0.625rem;
   padding: 0.875rem 2rem;
   font-size: 1rem;
   font-weight: 600;
@@ -1403,11 +1635,22 @@ ol {
   border: none;
   background: transparent;
   cursor: pointer;
-  transition: background var(--transition-base);
+  transition: background var(--transition-base), gap var(--transition-base);
+  position: relative;
+  z-index: 1;
 }
 
 .download-button-main:hover {
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(0, 0, 0, 0.08);
+  gap: 0.75rem;
+}
+
+.download-button-main svg {
+  transition: transform var(--transition-base);
+}
+
+.download-button-main:hover svg {
+  transform: translateY(2px);
 }
 
 .download-button-dropdown {
@@ -1733,6 +1976,10 @@ ol {
   .animate-slide-right,
   .animate-scale {
     opacity: 1 !important;
+    animation: none !important;
+  }
+
+  .download-button-group {
     animation: none !important;
   }
 }
