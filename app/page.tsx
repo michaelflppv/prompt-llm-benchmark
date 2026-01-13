@@ -13,10 +13,14 @@ import { ContactForm } from "@/components/contact/contact-form";
 
 const featureItems = [
   {
+    title: "Insightful metrics",
+    description: "Track latency, accuracy, memory usage, and cost with Pareto frontier analysis.",
+    icon: <IconChart width={20} height={20} />
+  },
+  {
     title: "Multi-backend support",
     description: "Benchmark across Transformers, llama.cpp, and Ollama with automatic GPU detection.",
-    icon: <IconRocket width={20} height={20} />,
-    featured: true
+    icon: <IconRocket width={20} height={20} />
   },
   {
     title: "Benchmark orchestration",
@@ -24,9 +28,9 @@ const featureItems = [
     icon: <IconWorkflow width={20} height={20} />
   },
   {
-    title: "Insightful metrics",
-    description: "Track latency, accuracy, memory usage, and cost with Pareto frontier analysis.",
-    icon: <IconChart width={20} height={20} />
+    title: "Reproducible results",
+    description: "Snapshot models and configs for every run with complete audit trail.",
+    icon: <IconShield width={20} height={20} />
   },
   {
     title: "Offline-ready workspace",
@@ -34,24 +38,9 @@ const featureItems = [
     icon: <IconCloud width={20} height={20} />
   },
   {
-    title: "Prompt iteration",
-    description: "Compare revisions, auto-generate prompts, and export findings to multiple formats.",
-    icon: <IconSpark width={20} height={20} />
-  },
-  {
-    title: "Real-time monitoring",
-    description: "Live resource tracking with Prometheus metrics and performance dashboards.",
-    icon: <IconPulse width={20} height={20} />
-  },
-  {
     title: "Security & privacy",
     description: "Encrypted secrets, row-level security, and local-first data architecture.",
     icon: <IconLock width={20} height={20} />
-  },
-  {
-    title: "Reproducible results",
-    description: "Snapshot models and configs for every run with complete audit trail.",
-    icon: <IconShield width={20} height={20} />
   }
 ];
 
