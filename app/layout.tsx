@@ -1,6 +1,7 @@
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: "Prompt LLM Bench Desktop",
@@ -18,7 +19,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className="light">
-      <body className="app-shell">{children}</body>
+      <body className="app-shell">
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }
