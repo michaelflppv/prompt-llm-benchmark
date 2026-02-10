@@ -11,9 +11,9 @@
   },
   "dependencies": {
     "@vercel/analytics": "^1.6.1",
-    "@vercel/blob": "^2.0.0",
+    "@vercel/blob": "^2.0.1",
     "isomorphic-dompurify": "^2.34.0",
-    "next": "^14.2.5",
+    "next": "^16.1.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "validator": "^13.15.26",
