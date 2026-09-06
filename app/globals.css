@@ -2,18 +2,33 @@
   --font-inter: "Inter";
   --font-mono: "JetBrains Mono";
   --background: 0 0% 0%;
-  --foreground: var(--text-primary);
-  --surface: var(--surface-base);
-  --surface-foreground: var(--text-primary);
-  --surface-muted: var(--alpha-8);
-  --muted: var(--alpha-12);
-  --muted-foreground: var(--text-secondary);
-  --accent: var(--alpha-8);
-  --accent-foreground: var(--text-primary);
-  --card: var(--surface-base);
-  --card-foreground: var(--text-primary);
-  --border: var(--border-primary);
-  --input: var(--alpha-12);
+
+  /*
+   * Semantic tokens consumed as hsl(var(--token)) or hsl(var(--token) / <alpha>).
+   * They MUST be bare space-separated HSL triplets (like the --neutral-* scale),
+   * never colour aliases: hsl(#F5F5F7) / hsl(rgba(20,20,20,0.6)) is invalid CSS
+   * and the whole declaration is silently dropped.
+   * Contrast on the near-black (#000) page — WCAG 2.1 AA needs 4.5:1 text / 3:1 UI:
+   *   --foreground        0 0% 96%  (#F5F5F7) on #000 -> ~19:1
+   *   --muted-foreground  0 0% 64%  (#A3A3A3) on #000 -> ~8:1; stays clearly
+   *                                 dimmer than --foreground for visible hierarchy
+   *   --border            0 0% 20%  hairline; hsl(var(--border) / 0.8) reads as a
+   *                                 faint line, not a heavy rule
+   *   --surface           0 0% 9%   dark panel fill, distinct from the page
+   *   --surface-muted     0 0% 12%  slightly lifted fill for inputs / segmented controls
+   */
+  --foreground: 0 0% 96%;
+  --surface: 0 0% 9%;
+  --surface-foreground: 0 0% 96%;
+  --surface-muted: 0 0% 12%;
+  --muted: 0 0% 12%;
+  --muted-foreground: 0 0% 64%;
+  --accent: 0 0% 12%;
+  --accent-foreground: 0 0% 96%;
+  --card: 0 0% 10%;
+  --card-foreground: 0 0% 96%;
+  --border: 0 0% 20%;
+  --input: 0 0% 12%;
   --ring: 0 0% 100%;
   --primary: 0 0% 100%;
   --primary-foreground: 0 0% 0%;
@@ -36,9 +51,11 @@
   --alpha-30: rgba(255, 255, 255, 0.30);
   --alpha-40: rgba(255, 255, 255, 0.40);
 
-  /* Core palette */
+  /* Core palette — hex values used directly (not via hsl()): glassy surfaces,
+   * badges, placeholders, consent copy. --text-secondary #A1A1A6 on #000 ~8:1.
+   * .eyebrow now uses --neutral-600 (~8:1); it was --neutral-500 (~3.9:1, failed AA). */
   --text-primary: #F5F5F7;
-  --text-secondary: #86868B;
+  --text-secondary: #A1A1A6;
   --border-primary: rgba(255, 255, 255, 0.12);
   --border-subtle: rgba(255, 255, 255, 0.08);
 
@@ -87,6 +104,8 @@
   --shadow-tight: 0 1px 3px rgba(0, 0, 0, 0.9);
   --shadow-interaction: 0 4px 12px rgba(0, 0, 0, 0.95);
   --shadow-inset: inset 0 0 20px rgba(255, 255, 255, 0.05);
+  --shadow-ambient: 0 2px 10px rgba(0, 0, 0, 0.7);
+  --shadow-lifted: 0 16px 40px rgba(0, 0, 0, 0.85);
 
   --transition-base: 160ms cubic-bezier(0.2, 0.9, 0.3, 1);
   --transition-emphasis: 220ms cubic-bezier(0.2, 0.9, 0.3, 1);
@@ -134,9 +153,39 @@ a {
 
 a:focus-visible,
 button:focus-visible,
-input:focus-visible {
-  outline: 2px solid hsl(var(--primary) / 0.45);
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[role="option"]:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid hsl(var(--primary) / 0.9);
   outline-offset: 2px;
+}
+
+/* Skip link - visually hidden until focused */
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: 0.5rem;
+  z-index: 1000;
+  padding: 0.6rem 1rem;
+  border-radius: 0.6rem;
+  background: var(--text-primary);
+  color: #000;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transform: translateY(-150%);
+  transition: transform var(--transition-base);
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skip-link {
+    transition: none;
+  }
 }
 
 img,
@@ -224,7 +273,7 @@ ol {
   font-size: 0.6875rem;
   text-transform: uppercase;
   letter-spacing: 0.15em;
-  color: hsl(var(--neutral-500));
+  color: hsl(var(--neutral-600));
   font-weight: 600;
   line-height: 1;
 }
@@ -417,7 +466,7 @@ ol {
 .btn-secondary {
   background: transparent;
   color: var(--text-primary);
-  border: 1px solid var(--alpha-30);
+  border: 1px solid var(--alpha-40);
   border-radius: var(--radius-pill);
   transition: background var(--transition-base), border-color var(--transition-base);
 }
@@ -641,11 +690,15 @@ ol {
 .mobile-links .nav-link {
   padding: 0.75rem 1rem;
   border-radius: 0.75rem;
-  color: rgba(255, 255, 255, 0.8);
-  transition: all var(--transition-base);
+  color: rgba(255, 255, 255, 0.85);
+  transition: color var(--transition-base), background var(--transition-base);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   font-size: 1rem;
   font-weight: 500;
+}
+
+.mobile-close {
+  align-self: flex-end;
 }
 
 .mobile-links .nav-link:last-child {
@@ -755,11 +808,12 @@ ol {
   padding-left: 1.5rem;
 }
 
-.visual-content h3 {
+.visual-content .visual-content-title {
   font-size: 1.5rem;
   font-weight: 700;
   margin: 0 0 0.5rem;
   line-height: 1.3;
+  color: var(--text-primary);
 }
 
 .visual-content p {
@@ -1170,6 +1224,12 @@ ol {
   font-size: 0.9rem;
 }
 
+.input::placeholder,
+.textarea::placeholder {
+  color: var(--text-secondary);
+  opacity: 1; /* Firefox lowers placeholder opacity by default */
+}
+
 .note {
   font-size: 0.875rem;
   line-height: 1.5;
@@ -1200,6 +1260,29 @@ ol {
   font-size: 0.875rem;
   font-weight: 600;
   color: hsl(var(--foreground));
+}
+
+.form-consent {
+  margin-top: -0.25rem;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+  flex-shrink: 0;
+  width: 1.15rem;
+  height: 1.15rem;
+  margin-top: 0.1rem;
+  accent-color: var(--text-primary);
+  cursor: pointer;
 }
 
 .textarea {
@@ -1422,6 +1505,57 @@ ol {
   height: 100%;
 }
 
+/* Click-to-load facade - no YouTube/Google request until activated */
+.youtube-facade {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  border: 1px solid hsl(var(--border) / 0.6);
+  border-radius: 1.5rem;
+  background:
+    radial-gradient(120% 120% at 50% 0%, rgba(255, 255, 255, 0.06), transparent 60%),
+    var(--surface-elevated);
+  color: var(--text-primary);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color var(--transition-base), background var(--transition-base);
+}
+
+.youtube-facade:hover {
+  border-color: var(--alpha-30);
+}
+
+.youtube-facade-play {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--text-primary);
+  color: #000;
+}
+
+.youtube-facade-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.youtube-facade-note {
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+
 .breadcrumb {
   padding: 1rem 0 0.5rem;
 }
@@ -1455,7 +1589,7 @@ ol {
 }
 
 .breadcrumb-separator {
-  color: hsl(var(--muted-foreground) / 0.5);
+  color: hsl(var(--muted-foreground));
   font-size: 0.75rem;
   user-select: none;
 }
@@ -1533,26 +1667,15 @@ ol {
   border-radius: 2rem;
   overflow: hidden;
   background: linear-gradient(135deg, var(--text-primary), rgba(255, 255, 255, 0.85));
-  box-shadow: var(--shadow-tight);
-  transition: all var(--transition-emphasis);
+  box-shadow: var(--shadow-tight), 0 0 20px 2px rgba(255, 255, 255, 0.15);
+  transition: background var(--transition-emphasis), box-shadow var(--transition-emphasis), transform var(--transition-emphasis);
   position: relative;
-  animation: pulseGlow 3s ease-in-out infinite;
-}
-
-@keyframes pulseGlow {
-  0%, 100% {
-    box-shadow: var(--shadow-tight), 0 0 20px 2px rgba(255, 255, 255, 0.15);
-  }
-  50% {
-    box-shadow: var(--shadow-tight), 0 0 30px 4px rgba(255, 255, 255, 0.25);
-  }
 }
 
 .download-button-group:hover {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.85), var(--text-primary));
   box-shadow: var(--shadow-interaction), 0 0 32px 6px rgba(255, 255, 255, 0.3);
   transform: translateY(-3px) scale(1.02);
-  animation: none;
 }
 
 .download-button-main {
@@ -1840,7 +1963,7 @@ ol {
     border-radius: clamp(0.75rem, 1.5vw, 1rem);
   }
 
-  .visual-content h3 {
+  .visual-content .visual-content-title {
     font-size: clamp(1.125rem, 2vw + 0.75rem, 1.25rem);
   }
 
@@ -1859,9 +1982,33 @@ ol {
     scroll-behavior: auto;
   }
 
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
   .card,
-  .btn {
+  .btn,
+  .feature-card,
+  .value-card,
+  .download-button-group {
     transition: none;
+  }
+
+  .card:hover,
+  .feature-card:hover,
+  .value-card:hover,
+  .download-button-group:hover {
+    transform: none;
+  }
+
+  .mobile-drawer.open,
+  .mobile-drawer.open .mobile-panel,
+  .mobile-overlay {
+    animation: none !important;
   }
 
   .animate-on-scroll,
@@ -1870,10 +2017,6 @@ ol {
   .animate-slide-right,
   .animate-scale {
     opacity: 1 !important;
-    animation: none !important;
-  }
-
-  .download-button-group {
     animation: none !important;
   }
 }

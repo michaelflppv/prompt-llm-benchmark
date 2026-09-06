@@ -66,13 +66,13 @@ const valuePoints = [
     icon: <IconTarget width={20} height={20} />
   },
   {
-    title: "Lightning fast",
-    description: "Parallel execution, persistent monitors, and optimized pipelines deliver 2-3x faster results than traditional benchmarking.",
+    title: "Parallel execution",
+    description: "Run evaluations concurrently with persistent monitors and optimized pipelines to shorten benchmarking runs.",
     icon: <IconZap width={20} height={20} />
   },
   {
     title: "PostgreSQL-powered",
-    description: "Enterprise-grade persistence with row-level security, concurrent access, and full ACID compliance for team workflows.",
+    description: "Durable persistence with row-level security, concurrent access, and ACID transactions for team workflows.",
     icon: <IconDatabase width={20} height={20} />
   }
 ];
@@ -96,7 +96,7 @@ const faqItems = [
   {
     id: "faq-platforms",
     title: "What platforms are supported?",
-    content: "Available for macOS (Apple Silicon), Windows (ARM64), and Linux (ARM64). Intel/AMD x64 builds are available upon request for enterprise deployments."
+    content: "Available for macOS (Apple Silicon), Windows (ARM64), and Linux (ARM64). If you need an Intel/AMD x64 build, get in touch and we'll let you know what's possible."
   },
   {
     id: "faq-export",
@@ -109,7 +109,7 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      <main className="main-shell">
+      <main className="main-shell" id="main" tabIndex={-1}>
         <div className="container">
           <section className="hero" id="home">
             <div className="hero-grid">
@@ -131,7 +131,7 @@ export default function Home() {
               <div className="hero-visual">
                 <div className="visual-accent"></div>
                 <div className="visual-content">
-                  <h3>Multi-platform support</h3>
+                  <p className="visual-content-title">Multi-platform support</p>
                   <p>macOS • Windows • Linux</p>
                 </div>
               </div>
@@ -152,7 +152,7 @@ export default function Home() {
                 <YouTubeAutoplayVideo
                   videoId="IQAArdVRpOY"
                   className="demo-video"
-                  threshold={0.75}
+                  title="Prompt LLM Bench demo"
                 />
               </div>
             </ScrollAnimation>
@@ -178,7 +178,7 @@ export default function Home() {
               {featureItems.map((feature, index) => (
                 <ScrollAnimation key={feature.title} animationType="slideUp" delay={index * 100}>
                   <div className="feature-card">
-                    <div className="feature-icon">{feature.icon}</div>
+                    <div className="feature-icon" aria-hidden="true">{feature.icon}</div>
                     <h3 className="feature-title">{feature.title}</h3>
                     <p className="feature-description">{feature.description}</p>
                   </div>
@@ -202,7 +202,7 @@ export default function Home() {
               {valuePoints.map((point, index) => (
                 <ScrollAnimation key={point.title} animationType="slideUp" delay={index * 100}>
                   <div className="value-card">
-                    <div className="value-icon">{point.icon}</div>
+                    <div className="value-icon" aria-hidden="true">{point.icon}</div>
                     <h3 className="value-title">{point.title}</h3>
                     <p className="value-description">{point.description}</p>
                   </div>

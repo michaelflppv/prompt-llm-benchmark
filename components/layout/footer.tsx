@@ -1,67 +1,18 @@
-"use client";
-
-import { useState, FormEvent } from "react";
 import Link from "next/link";
 
 import { Logo } from "@/components/ui/logo";
-import { Button } from "@/components/ui/button";
-import { newsletterSchema, containsSuspiciousPatterns } from "@/lib/validation";
+
+const CONTACT_EMAIL = "support@promptllmbench.com";
 
 export function Footer() {
-  const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError("");
-    setSuccess(false);
-
-    // First-line defense: check for obvious attack patterns
-    if (containsSuspiciousPatterns(email)) {
-      setError("Invalid input detected");
-      return;
-    }
-
-    // Validate and sanitize input
-    const result = newsletterSchema.safeParse({ email });
-
-    if (!result.success) {
-      setError(result.error.issues[0]?.message || "Invalid email");
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      // In production, this would call your newsletter API
-      // For now, just simulate success
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      setSuccess(true);
-      setEmail("");
-      setTimeout(() => setSuccess(false), 5000);
-    } catch (err) {
-      setError("Failed to subscribe. Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Limit input length client-side
-    const value = e.target.value.slice(0, 254);
-    setEmail(value);
-    setError("");
-  };
+  const year = new Date().getFullYear();
 
   return (
     <footer className="footer">
       <div className="container footer-grid">
         <div>
           <Logo />
-          <p className="note">Built for teams that demand transparent prompt quality.</p>
+          <p className="note">Built for teams that care about transparent prompt quality.</p>
         </div>
         <div>
           <div className="footer-title">Home</div>
@@ -77,60 +28,37 @@ export function Footer() {
           <div className="footer-links">
             <Link href="/download#release-notes">Release notes</Link>
             <Link href="/download#checksums">Checksums</Link>
-            <a href="mailto:support@promptllmbench.com">Support</a>
+            <a href={`mailto:${CONTACT_EMAIL}`}>Support</a>
           </div>
         </div>
         <div>
           <div className="footer-title">Legal</div>
           <div className="footer-links">
-            <Link href="/#">Privacy</Link>
-            <Link href="/#">Terms</Link>
-            <Link href="/#">Security</Link>
+            {/*
+              TODO: add Imprint / Privacy Policy / Terms links here once the
+              /legal/* pages ship (blocked on operator legal details). A link to
+              a non-existent policy is worse than no link, so they are omitted
+              for now.
+            */}
+            <a
+              href="https://github.com/michaelflppv/prompt-llm-benchmark/blob/main/SECURITY.md"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Security
+            </a>
           </div>
         </div>
         <div>
-          <div className="footer-title">Stay updated</div>
-          <form className="footer-form" onSubmit={handleSubmit} noValidate>
-            <input
-              className="input"
-              type="email"
-              name="email"
-              value={email}
-              onChange={handleEmailChange}
-              placeholder="Email address"
-              maxLength={254}
-              required
-              disabled={isSubmitting}
-              aria-label="Email address"
-              aria-invalid={error ? "true" : "false"}
-              aria-describedby={error ? "email-error" : undefined}
-            />
-            <Button
-              variant="secondary"
-              size="sm"
-              type="submit"
-              disabled={isSubmitting || !email}
-            >
-              {isSubmitting ? "Subscribing..." : "Subscribe"}
-            </Button>
-            {error && (
-              <span className="note" style={{ color: 'hsl(0 70% 60%)' }} id="email-error" role="alert">
-                {error}
-              </span>
-            )}
-            {success && (
-              <span className="note" style={{ color: 'hsl(120 50% 60%)' }} role="status">
-                Successfully subscribed!
-              </span>
-            )}
-            {!error && !success && (
-              <span className="note">Monthly updates. No spam.</span>
-            )}
-          </form>
+          <div className="footer-title">Get in touch</div>
+          <div className="footer-links">
+            <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+            <Link href="/#contact">Contact form</Link>
+          </div>
         </div>
       </div>
       <div className="container footer-meta">
-        <div className="note">© 2025 Prompt LLM Bench. All rights reserved.</div>
+        <div className="note">© {year} Prompt LLM Bench. All rights reserved.</div>
       </div>
     </footer>
   );

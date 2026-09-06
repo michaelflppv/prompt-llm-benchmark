@@ -18,9 +18,15 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className="light">
+    <html lang="en">
       <body className="app-shell">
+        <a href="#main" className="skip-link">Skip to content</a>
         {children}
+        {/*
+          Vercel Analytics is cookieless and stores nothing on the visitor's
+          device, so it runs without a consent gate. It is disclosed in the
+          privacy policy.
+        */}
         <Analytics />
       </body>
     </html>

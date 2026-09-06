@@ -159,13 +159,6 @@ export const slugSchema = z
 // ============================================================================
 
 /**
- * Newsletter subscription form
- */
-export const newsletterSchema = z.object({
-  email: emailSchema,
-});
-
-/**
  * Contact form
  */
 export const contactSchema = z.object({

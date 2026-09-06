@@ -10,22 +10,22 @@ import { downloads, releaseInfo } from "@/lib/downloads";
 
 const releaseHighlights = [
   "Multi-model comparison dashboard with side-by-side metrics visualization",
-  "Enhanced offline evaluation mode with full local processing capabilities",
-  "Advanced prompt diff engine showing token-level changes and version tracking",
-  "Improved resource monitoring with GPU memory tracking and CPU profiling",
-  "Pareto frontier analysis for optimal model selection based on accuracy-latency trade-offs",
-  "PostgreSQL-based persistence layer replacing SQLite for better concurrent access",
+  "Offline evaluation mode with full local processing",
+  "Prompt diff engine showing token-level changes and version tracking",
+  "Resource monitoring with GPU memory tracking and CPU profiling",
+  "Pareto frontier analysis for model selection based on accuracy-latency trade-offs",
+  "PostgreSQL persistence layer for concurrent access",
   "Automatic prompt generation using evolutionary grammar optimization",
-  "New chart exports supporting PNG, SVG, and interactive HTML formats",
-  "Performance improvements: 2-3x faster evaluation pipeline with parallel processing",
-  "Security enhancements including encrypted credential storage and row-level security"
+  "Chart exports supporting PNG, SVG, and interactive HTML formats",
+  "Parallel processing in the evaluation pipeline",
+  "Encrypted credential storage and row-level security"
 ];
 
 export default function DownloadPage() {
   return (
     <>
       <Navbar />
-      <main className="main-shell">
+      <main className="main-shell" id="main" tabIndex={-1}>
         <div className="container">
           <Breadcrumb
             items={[
@@ -54,7 +54,7 @@ export default function DownloadPage() {
                 <div className="visual-accent"></div>
                 <div className="visual-content">
                   <span className="visual-label">Latest</span>
-                  <h3>Version {releaseInfo.version}</h3>
+                  <p className="visual-content-title">Version {releaseInfo.version}</p>
                   <p>All platforms supported</p>
                 </div>
               </div>

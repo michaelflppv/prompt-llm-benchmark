@@ -88,6 +88,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Explicit consent is required before we process or forward any personal data.
+    if (body.consent !== true) {
+      return NextResponse.json(
+        { error: 'Please confirm you agree to be contacted about your enquiry.' },
+        { status: 400 }
+      );
+    }
+
     // Validate and sanitize inputs (double sanitization for extra safety)
     const name = sanitizeHTML(sanitizeInput(body.name || '', 100));
     const email = sanitizeInput(body.email || '', 254).toLowerCase();
@@ -174,28 +182,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Only send what Web3Forms needs to deliver the email. We deliberately do NOT
+    // forward the visitor's User-Agent, Accept-Language, Origin or Referer to this
+    // third-party (US) processor - data minimisation (GDPR Art. 5(1)(c)).
     const web3formsHeaders: Record<string, string> = {
       'Content-Type': 'application/json',
       'Accept': 'application/json'
     };
-
-    const userAgent = request.headers.get('user-agent');
-    const acceptLanguage = request.headers.get('accept-language');
-    const origin = request.headers.get('origin');
-    const referer = request.headers.get('referer');
-
-    if (userAgent) {
-      web3formsHeaders['User-Agent'] = userAgent;
-    }
-    if (acceptLanguage) {
-      web3formsHeaders['Accept-Language'] = acceptLanguage;
-    }
-    if (origin) {
-      web3formsHeaders['Origin'] = origin;
-    }
-    if (referer) {
-      web3formsHeaders['Referer'] = referer;
-    }
 
     // Send to Web3Forms using their API
     const web3formsResponse = await fetch('https://api.web3forms.com/submit', {
