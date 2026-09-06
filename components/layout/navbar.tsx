@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
 import { Logo } from "@/components/ui/logo";
@@ -16,11 +16,38 @@ const navItems = [
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
+    };
+  }, [open]);
+
+  // Keyboard + focus management for the mobile drawer.
+  useEffect(() => {
+    if (!open) return;
+
+    const toggle = toggleRef.current;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    // Move focus into the drawer when it opens.
+    const firstLink = panelRef.current?.querySelector<HTMLElement>("a, button");
+    firstLink?.focus();
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      // Return focus to the control that opened the drawer.
+      toggle?.focus();
     };
   }, [open]);
 
@@ -45,35 +72,46 @@ export function Navbar() {
             Release notes
           </Button>
         </div>
-        <Button
-          variant="icon"
-          className="mobile-toggle"
-          aria-label="Toggle navigation"
+        <button
+          ref={toggleRef}
+          type="button"
+          className="btn btn-icon mobile-toggle"
+          aria-label={open ? "Close navigation" : "Open navigation"}
           aria-expanded={open}
+          aria-controls="mobile-drawer"
           onClick={() => setOpen((prev) => !prev)}
         >
-          {open ? "×" : "≡"}
-        </Button>
+          <span aria-hidden="true">{open ? "×" : "≡"}</span>
+        </button>
       </div>
 
-      <div className={`mobile-drawer ${open ? "open" : ""}`} aria-hidden={!open}>
-        <div className="mobile-overlay" onClick={() => setOpen(false)} />
-        <div className="mobile-panel">
-          <div className="mobile-links">
-            {navItems.map((item) => (
-              <Link key={item.label} className="nav-link" href={item.href} onClick={() => setOpen(false)}>
-                {item.label}
-              </Link>
-            ))}
+      {open ? (
+        <div className="mobile-drawer open" id="mobile-drawer">
+          <div className="mobile-overlay" aria-hidden="true" onClick={() => setOpen(false)} />
+          <div className="mobile-panel" role="dialog" aria-modal="true" aria-label="Navigation" ref={panelRef}>
+            <button
+              type="button"
+              className="btn btn-ghost mobile-close"
+              onClick={() => setOpen(false)}
+            >
+              Close
+            </button>
+            <div className="mobile-links">
+              {navItems.map((item) => (
+                <Link key={item.label} className="nav-link" href={item.href} onClick={() => setOpen(false)}>
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+            <Button href="/download" variant="primary" onClick={() => setOpen(false)}>
+              Download
+            </Button>
+            <Button href="/download#release-notes" variant="secondary" onClick={() => setOpen(false)}>
+              Release notes
+            </Button>
           </div>
-          <Button href="/download" variant="primary">
-            Download
-          </Button>
-          <Button href="/download#release-notes" variant="secondary">
-            Release notes
-          </Button>
         </div>
-      </div>
+      ) : null}
     </header>
   );
 }

@@ -4,7 +4,7 @@ export const releaseInfo = {
   version: "0.1.0",
   releaseDate: "2025-01-15",
   releaseNotesUrl: "/download#release-notes",
-  changelog: "https://github.com/prompt-llm-bench/releases",
+  changelog: "https://github.com/michaelflppv/prompt-llm-benchmark/releases",
   minimumRequirements: {
     mac: "macOS 13 (Ventura) or later",
     windows: "Windows 11 ARM64",

@@ -18,35 +18,78 @@ const osOptions: Array<{ key: OSKey; label: string; detail: string }> = [
 
 export function DownloadButton({ selectedOs, onSelectOs, onDownload }: DownloadButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const optionRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const selected = downloads[selectedOs];
   const currentOption = osOptions.find((opt) => opt.key === selectedOs) || osOptions[0];
+  const selectedIndex = osOptions.findIndex((opt) => opt.key === selectedOs);
 
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+    if (!isOpen) return;
+
+    const wrapper = wrapperRef.current;
+
+    function handlePointerDown(event: MouseEvent) {
+      if (wrapper && !wrapper.contains(event.target as Node)) {
         setIsOpen(false);
       }
     }
 
-    if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
+    function handleFocusOut(event: FocusEvent) {
+      if (wrapper && !wrapper.contains(event.relatedTarget as Node)) {
+        setIsOpen(false);
+      }
     }
+
+    document.addEventListener("mousedown", handlePointerDown);
+    wrapper?.addEventListener("focusout", handleFocusOut);
+
+    // Move focus to the currently selected option when the menu opens.
+    optionRefs.current[selectedIndex >= 0 ? selectedIndex : 0]?.focus();
+
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("mousedown", handlePointerDown);
+      wrapper?.removeEventListener("focusout", handleFocusOut);
     };
-  }, [isOpen]);
+  }, [isOpen, selectedIndex]);
+
+  const closeAndRestoreFocus = () => {
+    setIsOpen(false);
+    triggerRef.current?.focus();
+  };
 
   const handleDownload = () => {
     setIsOpen(false);
-    if (onDownload) {
-      onDownload();
-    }
+    onDownload?.();
     window.location.href = selected.href;
   };
 
+  const handleMenuKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    const focusIndex = optionRefs.current.findIndex((el) => el === document.activeElement);
+
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeAndRestoreFocus();
+    } else if (event.key === "ArrowDown") {
+      event.preventDefault();
+      const next = (focusIndex + 1) % osOptions.length;
+      optionRefs.current[next]?.focus();
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault();
+      const prev = (focusIndex - 1 + osOptions.length) % osOptions.length;
+      optionRefs.current[prev]?.focus();
+    } else if (event.key === "Home") {
+      event.preventDefault();
+      optionRefs.current[0]?.focus();
+    } else if (event.key === "End") {
+      event.preventDefault();
+      optionRefs.current[osOptions.length - 1]?.focus();
+    }
+  };
+
   return (
-    <div className="download-button-wrapper" ref={dropdownRef}>
+    <div className="download-button-wrapper" ref={wrapperRef}>
       <div className="download-button-group">
         <a
           href={selected.href}
@@ -57,7 +100,7 @@ export function DownloadButton({ selectedOs, onSelectOs, onDownload }: DownloadB
           }}
           className="download-button-main"
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
             <polyline points="7 10 12 15 17 10"></polyline>
             <line x1="12" y1="15" x2="12" y2="3"></line>
@@ -65,12 +108,13 @@ export function DownloadButton({ selectedOs, onSelectOs, onDownload }: DownloadB
           Download Free
         </a>
         <button
+          ref={triggerRef}
           type="button"
           className="download-button-dropdown"
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={() => setIsOpen((prev) => !prev)}
           aria-expanded={isOpen}
           aria-haspopup="listbox"
-          aria-label="Select platform"
+          aria-label={`Select platform, currently ${currentOption.label} (${currentOption.detail})`}
         >
           <span className="download-button-platform">
             {currentOption.label} ({currentOption.detail})
@@ -82,6 +126,7 @@ export function DownloadButton({ selectedOs, onSelectOs, onDownload }: DownloadB
             fill="none"
             className={cn("download-button-arrow", isOpen && "open")}
             aria-hidden="true"
+            focusable="false"
           >
             <path
               d="M4 6L8 10L12 6"
@@ -95,10 +140,18 @@ export function DownloadButton({ selectedOs, onSelectOs, onDownload }: DownloadB
       </div>
 
       {isOpen && (
-        <div className="download-button-menu" role="listbox">
-          {osOptions.map((option) => (
+        <div
+          className="download-button-menu"
+          role="listbox"
+          aria-label="Choose a platform"
+          onKeyDown={handleMenuKeyDown}
+        >
+          {osOptions.map((option, index) => (
             <button
               key={option.key}
+              ref={(el) => {
+                optionRefs.current[index] = el;
+              }}
               type="button"
               role="option"
               aria-selected={option.key === selectedOs}
@@ -108,7 +161,7 @@ export function DownloadButton({ selectedOs, onSelectOs, onDownload }: DownloadB
               )}
               onClick={() => {
                 onSelectOs(option.key);
-                setIsOpen(false);
+                closeAndRestoreFocus();
               }}
             >
               <div className="download-button-option-content">
@@ -120,7 +173,7 @@ export function DownloadButton({ selectedOs, onSelectOs, onDownload }: DownloadB
                 </span>
               </div>
               {option.key === selectedOs && (
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
                   <path
                     d="M13 4L6 11L3 8"
                     stroke="currentColor"

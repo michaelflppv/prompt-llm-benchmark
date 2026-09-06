@@ -103,13 +103,18 @@ export function middleware(request: NextRequest) {
     // Content Security Policy - Prevents XSS, clickjacking, and other code injection attacks
     const cspHeader = [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // Next.js requires unsafe-eval in dev
+      // Next.js requires unsafe-eval in dev; va.vercel-scripts.com serves the
+      // (cookieless) Vercel Analytics script off-Vercel and in preview.
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com",
       "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: blob:",
+      "img-src 'self' data: blob: https://i.ytimg.com", // i.ytimg.com: thumbnails inside the YouTube embed (only after user activates it)
       "font-src 'self' data:",
       "media-src 'self' blob:",
-      "connect-src 'self' https://api.web3forms.com", // Allow Web3Forms API
-      "frame-src 'self' https://www.youtube-nocookie.com https://www.youtube.com", // Allow YouTube embeds
+      // Same-origin only. The contact form posts to our own /api/contact route,
+      // which talks to Web3Forms server-side. Vercel Analytics beacons to
+      // vitals.vercel-insights.com.
+      "connect-src 'self' https://vitals.vercel-insights.com https://va.vercel-scripts.com",
+      "frame-src 'self' https://www.youtube-nocookie.com https://www.youtube.com", // YouTube embed (loaded only after user consent)
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self'",

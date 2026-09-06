@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export function ContactForm() {
   const [formData, setFormData] = useState({
@@ -10,37 +10,42 @@ export function ContactForm() {
     message: '',
     website: '' // Honeypot field
   });
+  const [consent, setConsent] = useState(false);
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
   const [isDismissing, setIsDismissing] = useState(false);
+  const alertRef = useRef<HTMLDivElement>(null);
 
-  // Auto-dismiss messages after 5 seconds
+  // Auto-dismiss the success message only. Error messages stay until the user
+  // acts on them (WCAG 2.2.1 Timing Adjustable).
+  useEffect(() => {
+    if (status !== 'success') return;
+
+    const dismissTimer = setTimeout(() => {
+      setIsDismissing(true);
+      setTimeout(() => {
+        setStatus('idle');
+        setErrorMessage('');
+        setIsDismissing(false);
+      }, 300); // Match fade-out animation duration
+    }, 6000);
+
+    return () => clearTimeout(dismissTimer);
+  }, [status]);
+
+  // Move focus to the result message so it is announced and reachable.
   useEffect(() => {
     if (status === 'success' || status === 'error') {
-      const dismissTimer = setTimeout(() => {
-        setIsDismissing(true);
-        // Wait for fade-out animation to complete before hiding
-        setTimeout(() => {
-          setStatus('idle');
-          setErrorMessage('');
-          setIsDismissing(false);
-        }, 300); // Match animation duration
-      }, 5000);
-
-      return () => clearTimeout(dismissTimer);
+      alertRef.current?.focus();
     }
   }, [status]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Honeypot check (client-side)
-    if (formData.website) {
-      // Silent fail for bots
-      setStatus('success');
-      setTimeout(() => {
-        setFormData({ name: '', email: '', subject: '', message: '', website: '' });
-      }, 1000);
+    if (!consent) {
+      setStatus('error');
+      setErrorMessage('Please confirm you agree to be contacted about your enquiry.');
       return;
     }
 
@@ -48,41 +53,38 @@ export function ContactForm() {
     setErrorMessage('');
 
     try {
-      // Submit directly to Web3Forms API (client-side)
-      const response = await fetch('https://api.web3forms.com/submit', {
+      // Submit to our own hardened API route (rate limiting, sanitisation,
+      // honeypot and third-party delivery all happen server-side).
+      const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json',
+          Accept: 'application/json'
         },
         body: JSON.stringify({
-          access_key: process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY || 'YOUR_ACCESS_KEY_HERE',
           name: formData.name,
           email: formData.email,
-          subject: `Contact Form: ${formData.subject}`,
+          subject: formData.subject,
           message: formData.message,
-          from_name: formData.name,
-          replyto: formData.email,
-        }),
+          website: formData.website,
+          consent
+        })
       });
 
       const data = await response.json();
 
-      if (data.success) {
+      if (response.ok && data.success) {
         setStatus('success');
         setFormData({ name: '', email: '', subject: '', message: '', website: '' });
+        setConsent(false);
       } else {
         setStatus('error');
-        setErrorMessage(data.message || 'Failed to send message. Please try again.');
+        setErrorMessage(data.error || data.message || 'Failed to send message. Please try again.');
       }
     } catch (error) {
       console.error('Contact form error:', error);
       setStatus('error');
-      setErrorMessage(
-        error instanceof Error
-          ? `Error: ${error.message}`
-          : 'Network error. Please check your connection and try again.'
-      );
+      setErrorMessage('Network error. Please check your connection and try again.');
     }
   };
 
@@ -94,7 +96,7 @@ export function ContactForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="contact-form">
+    <form onSubmit={handleSubmit} className="contact-form" aria-describedby="contact-form-status">
       {/* Honeypot field - hidden from users, but bots will fill it */}
       <input
         type="text"
@@ -117,6 +119,7 @@ export function ContactForm() {
             value={formData.name}
             onChange={handleChange}
             required
+            autoComplete="name"
             className="input"
             placeholder="Your name"
           />
@@ -131,6 +134,7 @@ export function ContactForm() {
             value={formData.email}
             onChange={handleChange}
             required
+            autoComplete="email"
             className="input"
             placeholder="your.email@example.com"
           />
@@ -165,23 +169,52 @@ export function ContactForm() {
         />
       </div>
 
-      {status === 'error' && (
-        <div className={`alert alert-error ${isDismissing ? 'dismissing' : ''}`}>
-          <div className="alert-content">
-            <strong>Error</strong>
-            <span>{errorMessage}</span>
-          </div>
-        </div>
-      )}
+      <div className="form-field form-consent">
+        <label htmlFor="consent" className="checkbox-label">
+          <input
+            type="checkbox"
+            id="consent"
+            name="consent"
+            checked={consent}
+            onChange={(e) => setConsent(e.target.checked)}
+            required
+          />
+          <span>
+            I agree that the details I provide will be used to contact me about my enquiry. Your
+            message is delivered by email and not used for any other purpose.
+          </span>
+        </label>
+      </div>
 
-      {status === 'success' && (
-        <div className={`alert alert-success ${isDismissing ? 'dismissing' : ''}`}>
-          <div className="alert-content">
-            <strong>Thank you!</strong>
-            <span>Your message has been sent. We'll get back to you soon.</span>
+      <div id="contact-form-status" aria-live="polite">
+        {status === 'error' && (
+          <div
+            ref={alertRef}
+            tabIndex={-1}
+            role="alert"
+            className={`alert alert-error ${isDismissing ? 'dismissing' : ''}`}
+          >
+            <div className="alert-content">
+              <strong>Error</strong>
+              <span>{errorMessage}</span>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+
+        {status === 'success' && (
+          <div
+            ref={alertRef}
+            tabIndex={-1}
+            role="status"
+            className={`alert alert-success ${isDismissing ? 'dismissing' : ''}`}
+          >
+            <div className="alert-content">
+              <strong>Thank you!</strong>
+              <span>Your message has been sent. We&apos;ll get back to you soon.</span>
+            </div>
+          </div>
+        )}
+      </div>
 
       <button
         type="submit"
